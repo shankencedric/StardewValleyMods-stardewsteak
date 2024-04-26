@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using StardewModdingAPI;
 
@@ -30,16 +32,31 @@ namespace MoreMultiplayerInfo.Helpers
         public static void SaveOptions(object config)
         {
             Helper.WriteConfig(config);
-
             _configOptions = null;
         }
 
         static ConfigHelper()
         {
-            var watcher = new FileSystemWatcher(StardewModdingAPI.Constants.DataPath, "config.json");
+           // not working
 
-            watcher.Changed += (o, e) => _configFileUpdated = true;
+            void OnChanged(object sender, FileSystemEventArgs e)
+            {
+                _configFileUpdated = true; 
+                Console.WriteLine("[CHANGED]");
+            }
 
+            void Watch()
+            {
+                while (Helper == null) { }
+                var watcher = new FileSystemWatcher(Helper.DirectoryPath, "config.json");
+                watcher.NotifyFilter = NotifyFilters.LastWrite;
+                watcher.Changed += new FileSystemEventHandler(OnChanged);
+                watcher.EnableRaisingEvents = true;
+            }
+
+            Thread watch = new Thread(new ThreadStart(Watch));
+            watch.Start();
         }
+
     }
 }

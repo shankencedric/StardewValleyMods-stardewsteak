@@ -16,5 +16,10 @@
 
         [OptionDisplay("Hide in Single Player")]
         public bool HideInSinglePlayer { get; set; } = false;
+
+        [OptionDisplay("Show Your Icon")]
+        public bool ShowSelf { get; set; } = true;
+
+        public int HealthXPositionOffset { get; set; } = 69;
     }
 }

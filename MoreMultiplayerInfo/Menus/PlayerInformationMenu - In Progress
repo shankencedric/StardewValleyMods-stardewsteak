@@ -33,7 +33,7 @@ namespace MoreMultiplayerInfo
         private Vector2 _lastActionTimePos;
 
         private static int Width => 850;
-        private static int Height => 580;
+        private static int Height => 690;
 
         private static int Xposition => (Game1.viewport.Width / 2) - (Width / 2);
         private static int Yposition => (Game1.viewport.Height / 2) - (Height / 2);
@@ -62,8 +62,8 @@ namespace MoreMultiplayerInfo
 
         private void Resize(object sender, EventArgs e)
         {
-            this.xPositionOnScreen = Xposition;
-            this.yPositionOnScreen = Yposition;
+            //this.xPositionOnScreen = Xposition;
+            //this.yPositionOnScreen = Yposition;
         }
 
         public override void draw(SpriteBatch b)
@@ -137,22 +137,27 @@ namespace MoreMultiplayerInfo
 
         private void DrawSkills(SpriteBatch b)
         {
+            // Takes up 4.5/12 = 9/24 of inventory width
             _skillInfo = new PlayerSkillInfo(Player,
-                new Vector2(_inventory.xPositionOnScreen,
+                new Vector2(_inventory.xPositionOnScreen + (_inventory.width*5/12),
                     _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing));
             _skillInfo.draw(b);
         }
 
         private void DrawHealth(SpriteBatch b)
         {
-            _healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int)Player.Stamina, Player.maxStamina.Value,
-                new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width + (int)ConfigHelper.GetOptions().HealthXPositionOffset, _skillInfo.yPositionOnScreen, 45, 11));
+            // Takes up 2.5/12 = 5/24 of inventory width
+            _healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina.Value,
+                new Rectangle(_inventory.xPositionOnScreen + (_inventory.width*19/24) 
+                + (_inventory.width * 5/24)/2 - (3+6+15+3+6)*Game1.pixelZoom/2, // Center
+                _skillInfo.yPositionOnScreen, 45, 11));
             _healthBar.draw(b);
         }
 
         private void DrawLocationInfo(SpriteBatch b)
         {
-            var yPos = _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing;
+
+            var yPos = _inventory.yPositionOnScreen + (_inventory.height + GenericHeightSpacing * 1.5f) * 2;
 
             string text;
             if (Player == null || PlayerHelpers.IsPlayerOffline(PlayerId))
@@ -163,9 +168,9 @@ namespace MoreMultiplayerInfo
 
             var font = Game1.smallFont;
 
-            var textWidth = font.MeasureString(text).X;
+            //var textWidth = font.MeasureString(text).X;
 
-            var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4) - (textWidth / 2);
+            var xPos = _inventory.xPositionOnScreen;
 
             _locationPos = new Vector2(xPos, yPos);
 
@@ -178,26 +183,22 @@ namespace MoreMultiplayerInfo
 
             var font = Game1.smallFont;
 
-            var yPos = _locationPos.Y + font.LineSpacing + GenericHeightSpacing;
+            var yPos = _locationPos.Y + font.LineSpacing + GenericHeightSpacing/2;
             var action = PlayerStateWatcher.GetLastActionForPlayer(PlayerId);
 
-            var text = action.GetDisplayText();
+            var text = action.GetDisplayText() + " ";
 
             var textWidth = font.MeasureString(text).X;
 
-            var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4);
+            var xPos = _inventory.xPositionOnScreen;
 
-            _lastActionPos = new Vector2(xPos - (textWidth / 2), yPos);
+            _lastActionPos = new Vector2(xPos, yPos);
 
             b.DrawString(font, text, _lastActionPos, Color.Black);
 
             var lastActionTimeText = action.GetWhenDisplay();
 
-            var timeTextWidth = font.MeasureString(lastActionTimeText).X;
-
-            yPos += font.LineSpacing;
-
-            _lastActionTimePos = new Vector2(xPos - (timeTextWidth / 2), yPos);
+            _lastActionTimePos = new Vector2(xPos + textWidth, yPos);
 
             b.DrawString(font, lastActionTimeText, _lastActionTimePos, Color.Black);
         }

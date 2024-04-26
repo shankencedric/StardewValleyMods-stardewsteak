@@ -9,6 +9,7 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using StardewModdingAPI.Utilities;
+using System.IO;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
@@ -30,6 +31,12 @@ namespace MoreMultiplayerInfo.EventHandlers
             _helper.Events.GameLoop.UpdateTicked += SetupIcons;
 
             _helper.Events.Display.WindowResized += SetupIcons;
+
+            // Not working
+            var watcher = new FileSystemWatcher(_helper.DirectoryPath, "config.json");
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += new FileSystemEventHandler(SetupIcons);
+            watcher.EnableRaisingEvents = true;
         }
 
         private void SetupIcons(object sender, EventArgs e)

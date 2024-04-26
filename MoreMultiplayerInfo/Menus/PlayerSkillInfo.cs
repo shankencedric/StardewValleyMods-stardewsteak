@@ -28,11 +28,11 @@ namespace MoreMultiplayerInfo
 
             _skillLevels = new List<Tuple<string, int>>
             {
-                new Tuple<string, int>("Farming", player.farmingLevel),
-                new Tuple<string, int>("Foraging", player.foragingLevel),
-                new Tuple<string, int>("Mining", player.miningLevel),
-                new Tuple<string, int>("Combat", player.combatLevel),
-                new Tuple<string, int>("Fishing", player.fishingLevel),
+                new Tuple<string, int>("Farming", player.farmingLevel.Value),
+                new Tuple<string, int>("Foraging", player.foragingLevel.Value),
+                new Tuple<string, int>("Mining", player.miningLevel.Value),
+                new Tuple<string, int>("Combat", player.combatLevel.Value),
+                new Tuple<string, int>("Fishing", player.fishingLevel.Value),
             };
         }
 

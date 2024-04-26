@@ -29,7 +29,19 @@ namespace MoreMultiplayerInfo.EventHandlers
             
             helper.Events.GameLoop.UpdateTicked += UpdateReadyChecks;
         }
-        
+
+        // Returns if the field exists.
+        // Stores the field's value to storage.
+        private bool RetrieveFieldValue<T>(object obj, string name, ref T storage)
+        {
+            IReflectedField<T> field = _helper.Reflection.GetField<T>(obj, name, false);
+            bool valid = field != null;
+            if (valid)
+                storage = field.GetValue();
+            return valid;
+        }
+
+
         private void UpdateReadyChecks(object sender, EventArgs e)
         {
             if (!Context.IsWorldReady) return;
@@ -73,7 +85,9 @@ namespace MoreMultiplayerInfo.EventHandlers
                 var newCheck = checksNow.FirstOrDefault(c => !checksBefore.Contains(c));
                 var removedCheck = checksBefore.FirstOrDefault(c => !checksNow.Contains(c));
 
-                var playerName = PlayerHelpers.GetPlayerWithUniqueId(player).Name;
+                var _player = PlayerHelpers.GetPlayerWithUniqueId(player);
+                if (_player == null) continue;
+                var playerName = _player.Name;
 
                 var options = ConfigHelper.GetOptions();
 
@@ -125,7 +139,10 @@ namespace MoreMultiplayerInfo.EventHandlers
         private void ProcessReadyCheck(object readyCheck, Dictionary<string, HashSet<long>> readyChecks, Dictionary<long, HashSet<string>> readyPlayers)
         {
             var readyCheckName = _helper.Reflection.GetProperty<string>(readyCheck, "Name").GetValue() ?? string.Empty;
-            var readyPlayersCollection = _helper.Reflection.GetField<NetFarmerCollection>(readyCheck, "readyPlayers").GetValue() ?? new NetFarmerCollection();
+
+            NetFarmerCollection readyPlayersCollection = null;
+            if (!RetrieveFieldValue(readyCheck, "readyPlayers", ref readyPlayersCollection))
+                readyPlayersCollection = new NetFarmerCollection();
 
             var readyPlayersIds = new HashSet<long>(readyPlayersCollection.Select(p => p.UniqueMultiplayerID).Distinct());
 
@@ -139,12 +156,21 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         private List<object> GetReadyChecks()
         {
-            var readyChecksField = _helper.Reflection.GetField<object>(Game1.player.team, "readyChecks");
-            var readyChecksValue = readyChecksField?.GetValue();
+            object readyChecksValue = null;
+            RetrieveFieldValue(Game1.player.team, "readyChecks", ref readyChecksValue);
             var readyChecksValueType = readyChecksValue?.GetType();
 
-            var readyChecksValueTypeValues = (IEnumerable<object>) readyChecksValueType?.GetProperty("Values")?.GetValue(readyChecksValue) ?? Enumerable.Empty<object>();
-            return readyChecksValueTypeValues.ToList();
+            if (readyChecksValueType == null)
+            {
+                return Enumerable.Empty<object>().ToList();
+            }
+            else
+            {
+                var valuesProperty = readyChecksValueType.GetProperty("Values");
+                if (valuesProperty == null)
+                    return Enumerable.Empty<object>().ToList();
+                return ((IEnumerable<object>)valuesProperty.GetValue(readyChecksValue)).ToList();
+            }
         }
 
         public bool IsPlayerWaiting(long playerId)

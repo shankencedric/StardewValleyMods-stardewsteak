@@ -90,20 +90,20 @@ namespace MoreMultiplayerInfo.EventHandlers
             {
                 if (MinutesSinceWhen <= ShortSpan)
                 {
-                    return "just now";
+                    return "[just now]";
                 }
 
                 if (MinutesSinceWhen < OneHourSpan)
                 {
-                    return $"{MinutesSinceWhen} minutes ago";
+                    return $"[{MinutesSinceWhen} minutes ago]";
                 }
 
                 if (MinutesSinceWhen < LongSpan)
                 {
-                    return "one hour ago";
+                    return "[one hour ago]";
                 }
 
-                return "since " + Game1.getTimeOfDayString(When);
+                return "[since " + Game1.getTimeOfDayString(When) + "]";
             }
 
         }
@@ -127,7 +127,7 @@ namespace MoreMultiplayerInfo.EventHandlers
             {
                 var playerId = player.uniqueMultiplayerID;
 
-                LastActions.GetOrCreateDefault(playerId);
+                LastActions.GetOrCreateDefault(playerId.Value);
                 
                 var currentLocation = player.currentLocation?.name ?? new NetString("(unknown location)");
 
@@ -143,11 +143,11 @@ namespace MoreMultiplayerInfo.EventHandlers
         {
             if (player.UsingTool)
             {
-                LastActions[playerId] = new PlayerLastActivity
+                LastActions[playerId.Value] = new PlayerLastActivity
                 {
                     Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
                     When = Game1.timeOfDay,
-                    LocationName = currentLocation,
+                    LocationName = currentLocation.Value,
                     Hidden = player.hidden.Value
                 };
                 return true;
@@ -158,12 +158,12 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         private static bool CheckLocationChange(NetString currentLocation, NetLong playerId)
         {
-            if (currentLocation != LastActions[playerId].LocationName)
+            if (currentLocation.Value != LastActions[playerId.Value].LocationName)
             {
-                LastActions[playerId] = new PlayerLastActivity
+                LastActions[playerId.Value] = new PlayerLastActivity
                 {
                     Activity = "warped",
-                    LocationName = currentLocation,
+                    LocationName = currentLocation.Value,
                     When = Game1.timeOfDay,
                     Hidden = false
                 };

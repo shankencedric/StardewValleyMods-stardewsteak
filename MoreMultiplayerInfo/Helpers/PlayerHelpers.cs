@@ -10,7 +10,7 @@ namespace MoreMultiplayerInfo.Helpers
         {
             return Game1.getAllFarmers()
                 .Where(f => !string.IsNullOrEmpty(f.Name))
-                .Where(f => f.UniqueMultiplayerID != Game1.player.UniqueMultiplayerID)
+                .Where(f => ConfigHelper.GetOptions().ShowSelf || (f.UniqueMultiplayerID != Game1.player.UniqueMultiplayerID))
                 .ToList();
         }
 
