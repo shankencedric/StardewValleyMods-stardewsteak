@@ -67,7 +67,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             this.allClickableComponents = new List<ClickableComponent>();
 
-            this.xPositionOnScreen = Game1.graphics.GraphicsDevice.Viewport.TitleSafeArea.Right - 90;
+            this.xPositionOnScreen = Game1.uiViewport.Width - HeadshotIconSize - 24;
             this.yPositionOnScreen = 310;
             this.height = players.Count * HeadshotIconSize;
             this.width = HeadshotIconSize;
