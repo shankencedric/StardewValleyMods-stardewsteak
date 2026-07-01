@@ -1,7 +1,7 @@
 ﻿{
   "Name": "MoreMultiplayerInfo",
   "Author": "yummypecho - original by cheesysteak",
-  "Version": "4.0.0",
+  "Version": "4.0.1",
   "Description": "Displays helpful information about the other players on the farm. Updated to 1.6.",
   "UpdateKeys": [ "Nexus:22024" ],
   "UniqueID": "yummypecho.moremultiplayerinfo",

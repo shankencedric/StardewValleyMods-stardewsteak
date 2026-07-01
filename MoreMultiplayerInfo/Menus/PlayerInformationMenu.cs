@@ -35,8 +35,8 @@ namespace MoreMultiplayerInfo
         private static int Width => 850;
         private static int Height => 580;
 
-        private static int Xposition => (Game1.viewport.Width / 2) - (Width / 2);
-        private static int Yposition => (Game1.viewport.Height / 2) - (Height / 2);
+        private static int Xposition => (Game1.uiViewport.Width / 2) - (Width / 2);
+        private static int Yposition => (Game1.uiViewport.Height / 2) - (Height / 2);
 
         private static Item HoveredItem { get; set; }
 
@@ -64,6 +64,7 @@ namespace MoreMultiplayerInfo
         {
             this.xPositionOnScreen = Xposition;
             this.yPositionOnScreen = Yposition;
+            this.initializeUpperRightCloseButton();
         }
 
         public override void draw(SpriteBatch b)
