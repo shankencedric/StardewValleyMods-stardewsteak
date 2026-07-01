@@ -136,6 +136,26 @@ namespace MoreMultiplayerInfo.EventHandlers
             {
                 var player = PlayerHelpers.GetPlayerWithUniqueId(icon.PlayerId);
 
+                if (player == null)
+                {
+                    Console.WriteLine($"Skipping drawing of player <{player}> because NOT FOUND");
+                    continue;
+
+                    //foreach (var farmhand in Game1.getAllFarmhands())
+                    //{
+                    //    if (farmhand.UniqueMultiplayerID == icon.PlayerId)
+                    //    {
+                    //        player = farmhand;
+                    //        break;
+                    //    }
+                    //}
+                }
+                else if (player.FarmerRenderer == null)
+                {
+                    Console.WriteLine($"Skipping drawing of player <{player}> because NO RENDERER");
+                    continue;
+                }
+
                 player.FarmerRenderer.drawMiniPortrat(Game1.spriteBatch, new Vector2(icon.HeadshotPosition.X, icon.HeadshotPosition.Y), 0.5f, 0.75f * Game1.pixelZoom, 1, player);
 
                 var miniPortraitBounds = new Rectangle(Convert.ToInt32(icon.HeadshotPosition.X) + 8, Convert.ToInt32(icon.HeadshotPosition.Y) + 8, icon.HeadshotPosition.Width, icon.HeadshotPosition.Height);
